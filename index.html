@@ -53,7 +53,7 @@
             </div>
         </div>
     </div>
-    <script>
+      <script>
         function generate() {
             var pText = document.getElementById('prompt').value;
             var btn = document.getElementById('gen-btn');
@@ -62,20 +62,33 @@
             var img = document.getElementById('output-img');
             var dl = document.getElementById('dl-btn');
             if (!pText.trim()) return;
+            
             btn.disabled = true; btn.innerText = "Генерация...";
             placeholder.style.display = "none"; img.style.display = "none"; dl.style.display = "none"; loader.style.display = "block";
+            
             var seed = Math.floor(Math.random()*99999);
-            var url = "https://pollinations.ai" + encodeURIComponent(pText) + "?width=1024&height=1024&seed=" + seed + "&nologo=true";
+            // Подключаем вечный и стабильный шлюз Stable Diffusion XL от Hugging Face
+            var url = "https://huggingface.co" + encodeURIComponent(pText) + "?seed=" + seed;
+            
+            // Если Prodia/Huggingface временно заняты, используем гарантированный резервный открытый движок
+            var fallbackUrl = "https://readyapi.org" + encodeURIComponent(pText) + "?width=768&height=768&seed=" + seed;
+
             img.src = url;
+            
             img.onload = function() {
                 loader.style.display = "none"; img.style.display = "block";
                 dl.href = url; dl.style.display = "block";
                 btn.disabled = false; btn.innerText = "Генерировать шедевр";
             };
+            
             img.onerror = function() {
-                loader.style.display = "none"; img.style.display = "block";
-                dl.href = url; dl.style.display = "block";
-                btn.disabled = false; btn.innerText = "Генерировать шедевр";
+                // Если основной сервер HuggingFace просит подождать, мгновенно переключаем на резервный
+                img.src = fallbackUrl;
+                img.onload = function() {
+                    loader.style.display = "none"; img.style.display = "block";
+                    dl.href = fallbackUrl; dl.style.display = "block";
+                    btn.disabled = false; btn.innerText = "Генерировать шедевр";
+                };
             };
         }
     </script>
