@@ -10,8 +10,8 @@
         body { background-color: var(--bg-color); color: var(--text-color); font-family: sans-serif; min-height: 100vh; position: relative; }
         .cosmic-bg { position: fixed; inset: 0; z-index: -2; background: linear-gradient(180deg, #090514 0%, #040209 100%); }
         .lightning-storm { position: fixed; inset: 0; z-index: -1; pointer-events: none; animation: lightning-strike 4s infinite ease-in-out; }
-        @keyframes lightning-strike { 0%, 92%, 95%, 100% { background: rgba(0,0,0,0); } 93% { background: rgba(157, 78, 221, 0.18); filter: blur(4px); } 94% { background: rgba(181, 23, 158, 0.1); } }
-        .fog-bottom { position: fixed; bottom: 0; left: 0; width: 100%; height: 25vh; z-index: -1; background: linear-gradient(to top, rgba(123, 44, 191, 0.15), transparent); pointer-events: none; }
+        @keyframes lightning-strike { 0%, 92%, 95%, 100% { background: rgba(0,0,0,0); } 93% { background: rgba(157, 78, 221, 0.15); filter: blur(4px); } 94% { background: rgba(181, 23, 158, 0.08); } }
+        .fog-bottom { position: fixed; bottom: 0; left: 0; width: 100%; height: 25vh; z-index: -1; background: linear-gradient(to top, rgba(123, 44, 191, 0.12), transparent); pointer-events: none; }
         header { background: rgba(10, 7, 20, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-neon); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; background: linear-gradient(45deg, #e0aaff, #b5179e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .nav-tabs { display: flex; gap: 10px; }
@@ -41,9 +41,11 @@
     </style>
 </head>
 <body>
+    <!-- Контейнеры, которые запускают эффекты тумана и молний на сайте -->
     <div class="cosmic-bg"></div>
     <div class="lightning-storm"></div>
     <div class="fog-bottom"></div>
+
     <header>
         <div class="logo">PulseGenerate</div>
         <div class="nav-tabs">
@@ -82,16 +84,15 @@
         </div>
         <div id="gallery-panel" style="display:none;"><div class="gallery-grid" id="gallery-container"></div></div>
     </div>
-          <script>
+        <script>
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+            document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active'); });
             if(window.event && window.event.target) window.event.target.classList.add('active');
             document.getElementById('studio-panel').style.display = tabId==='studio'?'block':'none';
             document.getElementById('gallery-panel').style.display = tabId==='gallery'?'block':'none';
             if(tabId==='gallery') renderGallery();
         }
-
-        function generateImage() {
+        async function generateImage() {
             var pText = document.getElementById('prompt').value;
             var style = document.getElementById('style').value;
             var btn = document.getElementById('gen-btn');
@@ -99,62 +100,49 @@
             var placeholder = document.getElementById('placeholder');
             var img = document.getElementById('output-img');
             var dl = document.getElementById('dl-btn');
-
             if (!pText.trim()) return;
-
-            // Включаем режим загрузки
-            btn.disabled = true; 
-            btn.innerText = "Генерация...";
-            placeholder.style.display = "none"; 
-            img.style.display = "none"; 
-            dl.style.display = "none"; 
-            loader.style.display = "block";
-
+            
+            btn.disabled = true; btn.innerText = "Генерация...";
+            placeholder.style.display = "none"; img.style.display = "none"; dl.style.display = "none"; loader.style.display = "block";
             if(style==='cyberpunk') pText += ", cyberpunk neon, electric details";
             
             var seed = Math.floor(Math.random()*99999);
-            // Используем самый стабильный мировой сервер, который обходит любые блокировки браузера
-            var url = "https://pollinations.ai" + encodeURIComponent(pText) + "?width=1024&height=1024&seed=" + seed + "&nologo=true";
-
-            // Метод «Обход блокировки»: загружаем картинку напрямую в элемент экрана
-            img.src = url;
+            // Восстановленная прямая ссылка на сервер ИИ
+            var url = "https://pollinations.ai" + encodeURIComponent(pText) + "?width=768&height=768&seed=" + seed + "&model=flux&nologo=true";
             
-            img.onload = function() {
-                loader.style.display = "none"; 
-                img.style.display = "block";
-                dl.href = url; 
-                dl.style.display = "block";
-                
-                // Сохраняем в галерею
-                var items = JSON.parse(localStorage.getItem('my_ai_g')) || [];
-                items.unshift({url:url, p:pText}); 
-                localStorage.setItem('my_ai_g', JSON.stringify(items));
-                
-                btn.disabled = false; 
-                btn.innerText = "Генерировать шедевр";
-            };
-
-            img.onerror = function() {
-                // Если сервер завис, даем прямую резервную ссылку
-                loader.style.display = "none";
-                img.src = "https://pollinations.aiRick%20Sanchez%20neon%20lightning%20heart?width=1024&height=1024&nologo=true";
-                img.style.display = "block";
-                btn.disabled = false; 
-                btn.innerText = "Генерировать шедевр";
-            };
+            try {
+                var testImg = new Image(); 
+                testImg.crossOrigin = "anonymous";
+                testImg.src = url;
+                testImg.onload = function() {
+                    loader.style.display = "none"; 
+                    img.src = url; 
+                    img.style.display = "block";
+                    dl.href = url; 
+                    dl.style.display = "block";
+                    var items = JSON.parse(localStorage.getItem('my_ai_g')) || [];
+                    items.unshift({url:url, p:pText}); 
+                    localStorage.setItem('my_ai_g', JSON.stringify(items));
+                    btn.disabled = false; btn.innerText = "Генерировать шедевр";
+                };
+                testImg.onerror = function() {
+                    loader.style.display = "none";
+                    img.src = url; img.style.display = "block";
+                    dl.href = url; dl.style.display = "block";
+                    btn.disabled = false; btn.innerText = "Генерировать шедевр";
+                };
+            } catch(e) {
+                loader.style.display="none"; placeholder.style.display="block"; btn.disabled=false; btn.innerText = "Генерировать шедевр";
+            }
         }
-
         function renderGallery() {
             var c = document.getElementById('gallery-container');
             var items = JSON.parse(localStorage.getItem('my_ai_g')) || [];
-            if(!c) return; 
+            if(!c)return; 
             if(items.length===0){c.innerHTML='<div style="color:var(--text-muted);padding:40px;grid-column:1/-1;text-align:center;">Галерея пуста</div>';return;}
-            c.innerHTML = items.map(function(i){
-                return '<div class="gallery-item" onclick="window.open(\''+i.url+'\',\'_blank\')"><img src="' + i.url + '"><div class="gallery-info">' + i.p + '</div></div>';
-            }).join('');
+            c.innerHTML = items.map(function(i){return '<div class="gallery-item" onclick="window.open(\''+i.url+'\',\'_blank\')"><img src="' + i.url + '"><div class="gallery-info">'+i.p+'</div></div>';}).join('');
         }
     </script>
 </body>
 </html>
-
 
