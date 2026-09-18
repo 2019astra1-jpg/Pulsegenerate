@@ -3,94 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PulseGenerate</title>
+    <title>PulseGenerate - Rick Sanchez Artwork</title>
     <style>
-        :root { --bg: #050409; --panel: rgba(15,12,28,0.85); --purple: #7b2cbf; --bright: #b5179e; --neon: #e0aaff; --text: #f3f0fc; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; min-height: 100vh; position: relative; }
-        .cosmic-bg { position: fixed; inset: 0; z-index: -2; background: linear-gradient(180deg, #090514 0%, #040209 100%); }
-        /* Эффект фиолетовой грозы на весь экран */
-        .lightning { position: fixed; inset: 0; z-index: -1; pointer-events: none; animation: flash 4s infinite ease-in-out; }
-        @keyframes flash { 0%,92%,95%,100% { background: rgba(0,0,0,0); } 93% { background: rgba(157,78,221,0.15); filter: blur(4px); } 94% { background: rgba(181,23,158,0.08); } }
-        .fog { position: fixed; bottom: 0; left: 0; width: 100%; height: 25vh; z-index: -1; background: linear-gradient(to top, rgba(123,44,191,0.12), transparent); pointer-events: none; }
-        header { background: rgba(10,7,20,0.8); border-bottom: 1px solid rgba(157,78,221,0.3); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 24px; font-weight: 900; background: linear-gradient(45deg, #e0aaff, #b5179e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        .layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        .box { background: var(--panel); border: 1px solid rgba(157,78,221,0.3); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
-        .box-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--neon); border-left: 4px solid var(--bright); padding-left: 10px; }
-        textarea { width: 100%; height: 140px; background: #0c0918; border: 1px solid rgba(157,78,221,0.4); border-radius: 10px; padding: 12px; color: #fff; font-size: 14px; resize: none; outline: none; }
-        .gen-btn { width: 100%; background: linear-gradient(135deg, #9d4edd, #b5179e); color: #fff; border: none; padding: 16px; font-size: 15px; font-weight: 800; border-radius: 10px; cursor: pointer; text-transform: uppercase; margin-top: 15px; }
-        .gen-btn:disabled { background: #221d30; color: #7a7593; cursor: not-allowed; }
-        .preview { width: 100%; aspect-ratio: 1/1; background: #06040a; border: 2px dashed rgba(181,23,158,0.4); border-radius: 12px; display: flex; overflow: hidden; position: relative; }
-        .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; }
-        .placeholder { color: #7a7593; text-align: center; padding: 20px; margin: auto; font-size: 13.5px; }
-        .loader { display: none; width: 50px; height: 50px; border: 4px solid transparent; border-top-color: #b5179e; border-bottom-color: #e0aaff; border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .dl-btn { display: none; width: 100%; background: rgba(181,23,158,0.2); color: #fff; border: 1px solid #e0aaff; padding: 12px; text-align: center; text-decoration: none; font-weight: 700; border-radius: 8px; text-transform: uppercase; margin-top: 20px; }
+        :root {
+            --bg-color: #050409;
+            --panel-bg: rgba(15, 12, 28, 0.65);
+            --accent-purple: #7b2cbf;
+            --accent-bright: #b5179e;
+            --neon-glow: #e0aaff;
+            --text-color: #f3f0fc;
+            --border-neon: rgba(157, 78, 221, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* КОСМИЧЕСКИЙ ФОН */
+        .cosmic-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            background: linear-gradient(180deg, #090514 0%, #040209 100%);
+        }
+
+        /* ЖИВЫЕ ВСПЫШКИ МОЛНИЙ (привязаны к фону сайта) */
+        .lightning-storm {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            animation: lightning-flash 5s infinite ease-in-out;
+        }
+
+        @keyframes lightning-flash {
+            0%, 90%, 94%, 96%, 100% { background: rgba(0,0,0,0); }
+            92% { background: rgba(157, 78, 221, 0.15); filter: blur(4px); }
+            95% { background: rgba(181, 23, 158, 0.08); }
+        }
+
+        /* СТЕЛЮЩИЙСЯ СИРЕНЕВЫЙ ТУМАН ВНИЗУ */
+        .fog-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30vh;
+            z-index: -1;
+            background: linear-gradient(to top, rgba(123, 44, 191, 0.15), transparent);
+            filter: blur(15px);
+            pointer-events: none;
+            animation: fog-wave 6s infinite ease-in-out alternate;
+        }
+
+        @keyframes fog-wave {
+            0% { transform: scaleY(1) translateY(0); opacity: 0.6; }
+            100% { transform: scaleY(1.1) translateY(-10px); opacity: 0.8; }
+        }
+
+        /* РАМКА ДЛЯ НАШЕГО ИДЕАЛЬНОГО АРТА */
+        .art-card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-neon);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(157, 78, 221, 0.1);
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            animation: card-entry 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .art-card:hover {
+            border-color: var(--accent-bright);
+            transform: translateY(-5px);
+        }
+
+        @keyframes card-entry {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .art-title {
+            font-size: 24px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #e0aaff, #b5179e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(181, 23, 158, 0.4);
+        }
+
+        .image-wrapper {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: #06040a;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(123, 44, 191, 0.2);
+            position: relative;
+        }
+
+        /* Вшиваем твой идеальный получившийся арт напрямую в сайт */
+        .main-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: drop-shadow(0 0 15px rgba(157, 78, 221, 0.3));
+        }
+
+        /* КНОПКА СКАЧИВАНИЯ ОРИГИНАЛА */
+        .action-btn {
+            display: inline-block;
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-purple), #5a189a);
+            color: #fff;
+            border: 1px solid rgba(224, 170, 255, 0.3);
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 25px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3);
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, var(--accent-bright), var(--accent-purple));
+            box-shadow: 0 6px 25px rgba(181, 23, 158, 0.6);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
-    <div class="cosmic-bg"></div>
-    <div class="lightning"></div>
-    <div class="fog"></div>
-    <header><div class="logo">PulseGenerate</div></header>
-    <div class="container">
-        <div class="layout">
-            <div class="box">
-                <div class="box-title">Параметры</div>
-                <textarea id="prompt">Vibrant 2D cartoon animation, Rick Sanchez from Rick and Morty, exact show style, clean outlines, flat colors. Shocked expression, big round cartoon eyes, tiny dot pupils, wide open mouth. Background cosmic storm, purple and white lightning bolts heart shape, neon purple smoke</textarea>
-                <button id="gen-btn" class="gen-btn" onclick="generate()">Генерировать шедевр</button>
-            </div>
-            <div class="box">
-                <div class="box-title">Результат</div>
-                <div class="preview">
-                    <div id="loader" class="loader"></div>
-                    <div id="placeholder" class="placeholder">Нажмите кнопку для мгновенного запуска генератора</div>
-                    <img id="output-img" class="preview-img" alt="Результат">
-                </div>
-                <a id="dl-btn" class="dl-btn" target="_blank" download="art.jpg">Скачать HD</a>
-            </div>
-        </div>
-    </div>
-      <script>
-        function generate() {
-            var pText = document.getElementById('prompt').value;
-            var btn = document.getElementById('gen-btn');
-            var loader = document.getElementById('loader');
-            var placeholder = document.getElementById('placeholder');
-            var img = document.getElementById('output-img');
-            var dl = document.getElementById('dl-btn');
-            if (!pText.trim()) return;
-            
-            btn.disabled = true; btn.innerText = "Генерация...";
-            placeholder.style.display = "none"; img.style.display = "none"; dl.style.display = "none"; loader.style.display = "block";
-            
-            var seed = Math.floor(Math.random()*99999);
-            // Подключаем вечный и стабильный шлюз Stable Diffusion XL от Hugging Face
-            var url = "https://huggingface.co" + encodeURIComponent(pText) + "?seed=" + seed;
-            
-            // Если Prodia/Huggingface временно заняты, используем гарантированный резервный открытый движок
-            var fallbackUrl = "https://readyapi.org" + encodeURIComponent(pText) + "?width=768&height=768&seed=" + seed;
 
-            img.src = url;
-            
-            img.onload = function() {
-                loader.style.display = "none"; img.style.display = "block";
-                dl.href = url; dl.style.display = "block";
-                btn.disabled = false; btn.innerText = "Генерировать шедевр";
-            };
-            
-            img.onerror = function() {
-                // Если основной сервер HuggingFace просит подождать, мгновенно переключаем на резервный
-                img.src = fallbackUrl;
-                img.onload = function() {
-                    loader.style.display = "none"; img.style.display = "block";
-                    dl.href = fallbackUrl; dl.style.display = "block";
-                    btn.disabled = false; btn.innerText = "Генерировать шедевр";
-                };
-            };
-        }
-    </script>
+    <div class="cosmic-bg"></div>
+    <div class="lightning-storm"></div>
+    <div class="fog-bottom"></div>
+
+    <div class="art-card">
+        <div class="art-title">PulseGenerate</div>
+        <div class="image-wrapper">
+            <!-- Ссылка на твое новое идеальное изображение -->
+            <img class="main-img" src="https://postimg.cc" alt="Rick Sanchez Masterwork">
+        </div>
+        <a class="action-btn" href="https://postimg.cc" target="_blank" download="rick-pulse-neon.png">Скачать шедевр в 4K</a>
+    </div>
+
 </body>
 </html>
