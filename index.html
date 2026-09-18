@@ -3,146 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PulseGenerate - AI Studio</title>
+    <title>PulseGenerate</title>
     <style>
-        :root { --bg-color: #050409; --panel-bg: rgba(15, 12, 28, 0.85); --accent-purple: #7b2cbf; --accent-bright: #b5179e; --neon-glow: #e0aaff; --text-color: #f3f0fc; --text-muted: #7a7593; --border-neon: rgba(157, 78, 221, 0.3); }
+        :root { --bg: #050409; --panel: rgba(15,12,28,0.85); --purple: #7b2cbf; --bright: #b5179e; --neon: #e0aaff; --text: #f3f0fc; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--bg-color); color: var(--text-color); font-family: sans-serif; min-height: 100vh; position: relative; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; min-height: 100vh; position: relative; }
         .cosmic-bg { position: fixed; inset: 0; z-index: -2; background: linear-gradient(180deg, #090514 0%, #040209 100%); }
-        .lightning-storm { position: fixed; inset: 0; z-index: -1; pointer-events: none; animation: lightning-strike 4s infinite ease-in-out; }
-        @keyframes lightning-strike { 0%, 92%, 95%, 100% { background: rgba(0,0,0,0); } 93% { background: rgba(157, 78, 221, 0.15); filter: blur(4px); } 94% { background: rgba(181, 23, 158, 0.08); } }
-        .fog-bottom { position: fixed; bottom: 0; left: 0; width: 100%; height: 25vh; z-index: -1; background: linear-gradient(to top, rgba(123, 44, 191, 0.12), transparent); pointer-events: none; }
-        header { background: rgba(10, 7, 20, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-neon); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; background: linear-gradient(45deg, #e0aaff, #b5179e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav-tabs { display: flex; gap: 10px; }
-        .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 8px 16px; font-weight: 700; cursor: pointer; }
-        .tab-btn.active { color: #fff; background: var(--accent-purple); border-radius: 6px; box-shadow: 0 0 15px rgba(181, 23, 158, 0.5); }
+        /* Эффект фиолетовой грозы на весь экран */
+        .lightning { position: fixed; inset: 0; z-index: -1; pointer-events: none; animation: flash 4s infinite ease-in-out; }
+        @keyframes flash { 0%,92%,95%,100% { background: rgba(0,0,0,0); } 93% { background: rgba(157,78,221,0.15); filter: blur(4px); } 94% { background: rgba(181,23,158,0.08); } }
+        .fog { position: fixed; bottom: 0; left: 0; width: 100%; height: 25vh; z-index: -1; background: linear-gradient(to top, rgba(123,44,191,0.12), transparent); pointer-events: none; }
+        header { background: rgba(10,7,20,0.8); border-bottom: 1px solid rgba(157,78,221,0.3); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: 900; background: linear-gradient(45deg, #e0aaff, #b5179e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        .studio-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        .control-box, .result-box { background: var(--panel-bg); border: 1px solid var(--border-neon); border-radius: 16px; padding: 25px; box-shadow: 0 15px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
-        .box-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--neon-glow); border-left: 4px solid var(--accent-bright); padding-left: 10px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #d8bbff; text-transform: uppercase; }
-        textarea { width: 100%; height: 140px; background: #0c0918; border: 1px solid rgba(157, 78, 221, 0.4); border-radius: 10px; padding: 12px; color: #fff; font-size: 14px; resize: none; outline: none; }
-        .style-select { width: 100%; background: #0c0918; border: 1px solid rgba(157, 78, 221, 0.4); border-radius: 10px; padding: 12px; color: #fff; outline: none; }
-        .generate-btn { width: 100%; background: linear-gradient(135deg, #9d4edd, #b5179e); color: #fff; border: none; padding: 16px; font-size: 15px; font-weight: 800; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 15px rgba(181, 23, 158, 0.4); text-transform: uppercase; margin-top: 15px; }
-        .generate-btn:disabled { background: #221d30; color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
-        .preview-container { width: 100%; aspect-ratio: 1/1; background: #06040a; border: 2px dashed rgba(181, 23, 158, 0.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .box { background: var(--panel); border: 1px solid rgba(157,78,221,0.3); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .box-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--neon); border-left: 4px solid var(--bright); padding-left: 10px; }
+        textarea { width: 100%; height: 140px; background: #0c0918; border: 1px solid rgba(157,78,221,0.4); border-radius: 10px; padding: 12px; color: #fff; font-size: 14px; resize: none; outline: none; }
+        .gen-btn { width: 100%; background: linear-gradient(135deg, #9d4edd, #b5179e); color: #fff; border: none; padding: 16px; font-size: 15px; font-weight: 800; border-radius: 10px; cursor: pointer; text-transform: uppercase; margin-top: 15px; }
+        .gen-btn:disabled { background: #221d30; color: #7a7593; cursor: not-allowed; }
+        .preview { width: 100%; aspect-ratio: 1/1; background: #06040a; border: 2px dashed rgba(181,23,158,0.4); border-radius: 12px; display: flex; overflow: hidden; position: relative; }
         .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; }
-        .placeholder-text { color: var(--text-muted); text-align: center; padding: 20px; font-size: 13.5px; margin: auto; }
-        .loader { display: none; width: 60px; height: 60px; border: 4px solid transparent; border-top-color: #b5179e; border-bottom-color: #e0aaff; border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
+        .placeholder { color: #7a7593; text-align: center; padding: 20px; margin: auto; font-size: 13.5px; }
+        .loader { display: none; width: 50px; height: 50px; border: 4px solid transparent; border-top-color: #b5179e; border-bottom-color: #e0aaff; border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .action-buttons { display: flex; margin-top: 20px; width: 100%; }
-        .download-btn { display: none; width: 100%; background: rgba(181, 23, 158, 0.2); color: #fff; border: 1px solid #e0aaff; padding: 12px; text-align: center; text-decoration: none; font-weight: 700; border-radius: 8px; text-transform: uppercase; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .gallery-item { background: var(--panel-bg); border: 1px solid var(--border-neon); border-radius: 12px; overflow: hidden; cursor: pointer; }
-        .gallery-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .gallery-info { padding: 15px; font-size: 12px; color: #cbb2ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: #0a0716; }
+        .dl-btn { display: none; width: 100%; background: rgba(181,23,158,0.2); color: #fff; border: 1px solid #e0aaff; padding: 12px; text-align: center; text-decoration: none; font-weight: 700; border-radius: 8px; text-transform: uppercase; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <!-- Контейнеры, которые запускают эффекты тумана и молний на сайте -->
     <div class="cosmic-bg"></div>
-    <div class="lightning-storm"></div>
-    <div class="fog-bottom"></div>
-
-    <header>
-        <div class="logo">PulseGenerate</div>
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('studio')">Студия</button>
-            <button class="tab-btn" onclick="switchTab('gallery')">Галерея</button>
-        </div>
-    </header>
+    <div class="lightning"></div>
+    <div class="fog"></div>
+    <header><div class="logo">PulseGenerate</div></header>
     <div class="container">
-        <div id="studio-panel" style="display:block;">
-            <div class="studio-layout">
-                <div class="control-box">
-                    <div class="box-title">Параметры</div>
-                    <div class="form-group">
-                        <label>Запрос (Промпт)</label>
-                        <textarea id="prompt">Vibrant 2D cartoon animation, Rick Sanchez from Rick and Morty, exact show style, clean outlines, flat colors. Shocked expression, big round cartoon eyes, tiny dot pupils, wide open mouth. Background cosmic storm, purple and white lightning bolts heart shape, neon purple smoke</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Стиль</label>
-                        <select id="style" class="style-select">
-                            <option value="cartoon">Мультфильм (Канон)</option>
-                            <option value="cyberpunk">Киберпанк (Неон)</option>
-                        </select>
-                    </div>
-                    <button id="gen-btn" class="generate-btn" onclick="generateImage()">Генерировать шедевр</button>
+        <div class="layout">
+            <div class="box">
+                <div class="box-title">Параметры</div>
+                <textarea id="prompt">Vibrant 2D cartoon animation, Rick Sanchez from Rick and Morty, exact show style, clean outlines, flat colors. Shocked expression, big round cartoon eyes, tiny dot pupils, wide open mouth. Background cosmic storm, purple and white lightning bolts heart shape, neon purple smoke</textarea>
+                <button id="gen-btn" class="gen-btn" onclick="generate()">Генерировать шедевр</button>
+            </div>
+            <div class="box">
+                <div class="box-title">Результат</div>
+                <div class="preview">
+                    <div id="loader" class="loader"></div>
+                    <div id="placeholder" class="placeholder">Нажмите кнопку для мгновенного запуска генератора</div>
+                    <img id="output-img" class="preview-img" alt="Результат">
                 </div>
-                <div class="result-box">
-                    <div class="box-title">Результат</div>
-                    <div class="preview-container">
-                        <div id="loader" class="loader"></div>
-                        <div id="placeholder" class="placeholder-text">Нажмите кнопку для мгновенного запуска FLUX Fast</div>
-                        <img id="output-img" class="preview-img" alt="Результат">
-                    </div>
-                    <div class="action-buttons"><a id="dl-btn" class="download-btn" target="_blank" download="art.jpg">Скачать HD</a></div>
-                </div>
+                <a id="dl-btn" class="dl-btn" target="_blank" download="art.jpg">Скачать HD</a>
             </div>
         </div>
-        <div id="gallery-panel" style="display:none;"><div class="gallery-grid" id="gallery-container"></div></div>
     </div>
-        <script>
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active'); });
-            if(window.event && window.event.target) window.event.target.classList.add('active');
-            document.getElementById('studio-panel').style.display = tabId==='studio'?'block':'none';
-            document.getElementById('gallery-panel').style.display = tabId==='gallery'?'block':'none';
-            if(tabId==='gallery') renderGallery();
-        }
-        async function generateImage() {
+    <script>
+        function generate() {
             var pText = document.getElementById('prompt').value;
-            var style = document.getElementById('style').value;
             var btn = document.getElementById('gen-btn');
             var loader = document.getElementById('loader');
             var placeholder = document.getElementById('placeholder');
             var img = document.getElementById('output-img');
             var dl = document.getElementById('dl-btn');
             if (!pText.trim()) return;
-            
             btn.disabled = true; btn.innerText = "Генерация...";
             placeholder.style.display = "none"; img.style.display = "none"; dl.style.display = "none"; loader.style.display = "block";
-            if(style==='cyberpunk') pText += ", cyberpunk neon, electric details";
-            
             var seed = Math.floor(Math.random()*99999);
-            // Восстановленная прямая ссылка на сервер ИИ
-            var url = "https://pollinations.ai" + encodeURIComponent(pText) + "?width=768&height=768&seed=" + seed + "&model=flux&nologo=true";
-            
-            try {
-                var testImg = new Image(); 
-                testImg.crossOrigin = "anonymous";
-                testImg.src = url;
-                testImg.onload = function() {
-                    loader.style.display = "none"; 
-                    img.src = url; 
-                    img.style.display = "block";
-                    dl.href = url; 
-                    dl.style.display = "block";
-                    var items = JSON.parse(localStorage.getItem('my_ai_g')) || [];
-                    items.unshift({url:url, p:pText}); 
-                    localStorage.setItem('my_ai_g', JSON.stringify(items));
-                    btn.disabled = false; btn.innerText = "Генерировать шедевр";
-                };
-                testImg.onerror = function() {
-                    loader.style.display = "none";
-                    img.src = url; img.style.display = "block";
-                    dl.href = url; dl.style.display = "block";
-                    btn.disabled = false; btn.innerText = "Генерировать шедевр";
-                };
-            } catch(e) {
-                loader.style.display="none"; placeholder.style.display="block"; btn.disabled=false; btn.innerText = "Генерировать шедевр";
-            }
-        }
-        function renderGallery() {
-            var c = document.getElementById('gallery-container');
-            var items = JSON.parse(localStorage.getItem('my_ai_g')) || [];
-            if(!c)return; 
-            if(items.length===0){c.innerHTML='<div style="color:var(--text-muted);padding:40px;grid-column:1/-1;text-align:center;">Галерея пуста</div>';return;}
-            c.innerHTML = items.map(function(i){return '<div class="gallery-item" onclick="window.open(\''+i.url+'\',\'_blank\')"><img src="' + i.url + '"><div class="gallery-info">'+i.p+'</div></div>';}).join('');
+            var url = "https://pollinations.ai" + encodeURIComponent(pText) + "?width=1024&height=1024&seed=" + seed + "&nologo=true";
+            img.src = url;
+            img.onload = function() {
+                loader.style.display = "none"; img.style.display = "block";
+                dl.href = url; dl.style.display = "block";
+                btn.disabled = false; btn.innerText = "Генерировать шедевр";
+            };
+            img.onerror = function() {
+                loader.style.display = "none"; img.style.display = "block";
+                dl.href = url; dl.style.display = "block";
+                btn.disabled = false; btn.innerText = "Генерировать шедевр";
+            };
         }
     </script>
 </body>
 </html>
-
