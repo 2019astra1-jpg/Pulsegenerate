@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PulseGenerate - Эпичная ИИ Студия</title>
+    <title>PulseGenerate - AI Studio</title>
     <style>
         :root {
             --bg-color: #050409;
@@ -19,7 +19,7 @@
         body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Segoe UI', Roboto, sans-serif; overflow-x: hidden; min-height: 100vh; }
         .cosmic-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; background: linear-gradient(180deg, #090514 0%, #040209 100%); }
         .lightning-storm { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at 30% 20%, rgba(123, 44, 191, 0.15) 0%, transparent 60%); pointer-events: none; animation: lightning-strike 5s infinite ease-in-out; }
-        @keyframes lightning-strike { 0%, 88%, 91%, 93%, 100% { opacity: 0; filter: blur(0px); } 89% { opacity: 1; background: radial-gradient(circle at 30% 20%, rgba(224, 170, 255, 0.25) 0%, transparent 70%); filter: blur(2px); } 90% { opacity: 0.3; } 92% { opacity: 0.8; background: radial-gradient(circle at 40% 30%, rgba(181, 23, 158, 0.2) 0%, transparent 60%); } }
+        @keyframes lightning-strike { 0%, 88%, 91%, 93%, 100% { opacity: 0; } 89% { opacity: 1; background: radial-gradient(circle at 30% 20%, rgba(224, 170, 255, 0.25) 0%, transparent 70%); } 90% { opacity: 0.3; } 92% { opacity: 0.8; background: radial-gradient(circle at 40% 30%, rgba(181, 23, 158, 0.2) 0%, transparent 60%); } }
         .fog-bottom { position: fixed; bottom: 0; left: 0; width: 100vw; height: 30vh; z-index: -1; background: linear-gradient(to top, rgba(123, 44, 191, 0.12), transparent); filter: blur(20px); pointer-events: none; animation: fog-wave 8s infinite ease-in-out alternate; }
         @keyframes fog-wave { 0% { transform: scaleY(1) translateY(0); opacity: 0.7; } 100% { transform: scaleY(1.2) translateY(-10px); opacity: 0.9; } }
         header { background: rgba(10, 7, 20, 0.6); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border-neon); padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 5px 25px rgba(0,0,0,0.4); }
@@ -52,11 +52,11 @@
         .loader { display: none; width: 70px; height: 70px; border: 4px solid transparent; border-top-color: #b5179e; border-bottom-color: #e0aaff; border-radius: 50%; animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .action-buttons { display: flex; margin-top: 25px; width: 100%; }
-        .download-btn { display: none; width: 100%; background: rgba(181, 23, 158, 0.1); color: #fff; border: 1px solid rgba(224, 170, 255, 0.4); padding: 15px; text-align: center; text-decoration: none; font-weight: 700; border-radius: 10px; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; }
-        .download-btn:hover { background: rgba(181, 23, 158, 0.3); box-shadow: 0 0 25px rgba(181, 23, 158, 0.5); }
+                .download-btn { display: none; width: 100%; background: rgba(181, 23, 158, 0.1); color: #fff; border: 1px solid rgba(224, 170, 255, 0.4); padding: 15px; text-align: center; text-decoration: none; font-weight: 700; border-radius: 10px; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .download-btn:hover { background: rgba(181, 23, 158, 0.3); box-shadow: 0 0 25px rgba(181, 23, 158, 0.5); border-color: #fff; }
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
         .gallery-item { background: var(--panel-bg); border: 1px solid var(--border-neon); border-radius: 18px; overflow: hidden; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; }
-        .gallery-item:hover { transform: translateY(-8px) scale(1.02); border-color: var(--accent-bright); box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+        .gallery-item:hover { transform: translateY(-8px) scale(1.02); border-color: var(--accent-bright); box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 15px rgba(181, 23, 158, 0.3); }
         .gallery-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
         .gallery-info { padding: 20px; font-size: 13.5px; color: #cbb2ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: rgba(10, 7, 22, 0.9); border-top: 1px solid rgba(157, 78, 221, 0.1); }
     </style>
@@ -110,86 +110,75 @@
     </div>
     <script>
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.app-panel').forEach(panel => panel.classList.remove('active'));
-            if(window.event && window.event.target) window.event.target.classList.add('active');
-            document.getElementById(tabId + '-panel').classList.add('active');
-            if(tabId === 'gallery') renderGallery();
+            document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.querySelectorAll('.app-panel').forEach(function(panel) { panel.classList.remove('active'); });
+            if (window.event && window.event.target) { window.event.target.classList.add('active'); }
+            var panel = document.getElementById(tabId + '-panel');
+            if (panel) panel.classList.add('active');
+            if (tabId === 'gallery') renderGallery();
+        }
         async function generateImage() {
-            const promptText = document.getElementById('prompt').value;
-            const styleSelect = document.getElementById('style').value;
-            const genBtn = document.getElementById('gen-btn');
-            const loader = document.getElementById('loader');
-            const placeholder = document.getElementById('placeholder');
-            const outputImg = document.getElementById('output-img');
-            const dlBtn = document.getElementById('dl-btn');
-            const wrapper = document.getElementById('preview-wrapper');
-
+            var promptText = document.getElementById('prompt').value;
+            var styleSelect = document.getElementById('style').value;
+            var genBtn = document.getElementById('gen-btn');
+            var loader = document.getElementById('loader');
+            var placeholder = document.getElementById('placeholder');
+            var outputImg = document.getElementById('output-img');
+            var dlBtn = document.getElementById('dl-btn');
+            var wrapper = document.getElementById('preview-wrapper');
             if (!promptText.trim()) return;
-
             genBtn.disabled = true;
             genBtn.innerText = "ИИ материализует арт...";
-            if(placeholder) placeholder.style.display = "none";
-            if(wrapper) wrapper.classList.remove('active');
-            if(dlBtn) dlBtn.style.display = "none";
-            if(loader) loader.style.display = "block";
-
-            let finalPrompt = promptText;
+            if (placeholder) placeholder.style.display = "none";
+            if (outputImg) outputImg.style.display = "none";
+            if (wrapper) wrapper.classList.remove('active');
+            if (dlBtn) dlBtn.style.display = "none";
+            if (loader) loader.style.display = "block";
+            var finalPrompt = promptText;
             if (styleSelect === 'cyberpunk') finalPrompt += ", cyberpunk vaporwave style, glowing detailed electricity, hyper neon purple";
             if (styleSelect === 'fantasy') finalPrompt += ", cinematic concept art, highly detailed masterwork, dramatic dark lighting";
-            
-            const randomSeed = Math.floor(Math.random() * 99999999);
-            const apiUrl = "https://pollinations.ai" + encodeURIComponent(finalPrompt) + "?width=1024&height=1024&seed=" + randomSeed + "&model=flux&nologo=true";
-
+            var randomSeed = Math.floor(Math.random() * 99999999);
+            var apiUrl = "https://pollinations.ai" + encodeURIComponent(finalPrompt) + "?width=1024&height=1024&seed=" + randomSeed + "&model=flux&nologo=true";
             try {
-                const img = new Image();
+                var img = new Image();
                 img.src = apiUrl;
                 img.crossOrigin = "anonymous";
                 img.onload = function() {
-                    if(loader) loader.style.display = "none";
-                    if(outputImg) {
-                        outputImg.src = apiUrl;
-                        outputImg.style.display = "block";
-                    }
-                    if(wrapper) wrapper.classList.add('active');
-                    
-                    if(dlBtn) {
-                        dlBtn.href = apiUrl;
-                        dlBtn.style.display = "block";
-                    }
-                    
+                    if (loader) loader.style.display = "none";
+                    if (outputImg) { outputImg.src = apiUrl; outputImg.style.display = "block"; }
+                    if (wrapper) wrapper.classList.add('active');
+                    if (dlBtn) { dlBtn.href = apiUrl; dlBtn.style.display = "block"; }
                     saveToLocalGallery(apiUrl, promptText);
                     genBtn.disabled = false;
                     genBtn.innerText = "Генерировать шедевр";
                 };
+                img.onerror = function() { throw new Error("Load failed"); };
             } catch (error) {
                 alert("Ошибка связи с ИИ. Попробуйте нажать кнопку еще раз.");
-                if(loader) loader.style.display = "none";
-                if(placeholder) placeholder.style.display = "block";
+                if (loader) loader.style.display = "none";
+                if (placeholder) placeholder.style.display = "block";
                 genBtn.disabled = false;
                 genBtn.innerText = "Генерировать шедевр";
             }
         }
- }
         function saveToLocalGallery(url, prompt) {
-            let items = JSON.parse(localStorage.getItem('my_ai_gallery')) || [];
+            var items = JSON.parse(localStorage.getItem('my_ai_gallery')) || [];
             items.unshift({ url: url, prompt: prompt });
             localStorage.setItem('my_ai_gallery', JSON.stringify(items));
         }
         function renderGallery() {
-            const container = document.getElementById('gallery-container');
-            let items = JSON.parse(localStorage.getItem('my_ai_gallery')) || [];
-            if(items.length === 0) {
+            var container = document.getElementById('gallery-container');
+            var items = JSON.parse(localStorage.getItem('my_ai_gallery')) || [];
+            if (!container) return;
+            if (items.length === 0) {
                 container.innerHTML = '<div style="color:var(--text-muted); text-align:center; grid-column: 1/-1; padding: 60px; font-size: 15px;">Ваша галерея пуста. Создайте свой первый неоновый шедевр!</div>';
                 return;
             }
             container.innerHTML = items.map(function(item) {
-                return '<div class="gallery-item" onclick="window.open('' + item.url + '', '_blank')">' +
-                    '<img src="' + item.url + '" alt="AI Art">' +
-                    '<div class="gallery-info">' + item.prompt + '</div>' +
-                '</div>';
+                return '<div class="gallery-item" onclick="window.open(\'' + item.url + '\', \'_blank\')"><img src="' + item.url + '" alt="AI Art"><div class="gallery-info">' + item.prompt + '</div></div>';
             }).join('');
         }
     </script>
 </body>
 </html>
+
