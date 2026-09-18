@@ -3,163 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PulseGenerate - Rick Sanchez Artwork</title>
+    <title>PulseGenerate</title>
     <style>
         :root {
             --bg-color: #050409;
             --panel-bg: rgba(15, 12, 28, 0.65);
-            --accent-purple: #7b2cbf;
             --accent-bright: #b5179e;
-            --neon-glow: #e0aaff;
-            --text-color: #f3f0fc;
             --border-neon: rgba(157, 78, 221, 0.3);
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* КОСМИЧЕСКИЙ ФОН */
-        .cosmic-bg {
-            position: fixed;
-            inset: 0;
-            z-index: -3;
-            background: linear-gradient(180deg, #090514 0%, #040209 100%);
-        }
-
-        /* ЖИВЫЕ ВСПЫШКИ МОЛНИЙ (привязаны к фону сайта) */
-        .lightning-storm {
-            position: fixed;
-            inset: 0;
-            z-index: -2;
-            pointer-events: none;
-            animation: lightning-flash 5s infinite ease-in-out;
-        }
-
-        @keyframes lightning-flash {
-            0%, 90%, 94%, 96%, 100% { background: rgba(0,0,0,0); }
-            92% { background: rgba(157, 78, 221, 0.15); filter: blur(4px); }
-            95% { background: rgba(181, 23, 158, 0.08); }
-        }
-
-        /* СТЕЛЮЩИЙСЯ СИРЕНЕВЫЙ ТУМАН ВНИЗУ */
-        .fog-bottom {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 30vh;
-            z-index: -1;
-            background: linear-gradient(to top, rgba(123, 44, 191, 0.15), transparent);
-            filter: blur(15px);
-            pointer-events: none;
-            animation: fog-wave 6s infinite ease-in-out alternate;
-        }
-
-        @keyframes fog-wave {
-            0% { transform: scaleY(1) translateY(0); opacity: 0.6; }
-            100% { transform: scaleY(1.1) translateY(-10px); opacity: 0.8; }
-        }
-
-        /* РАМКА ДЛЯ НАШЕГО ИДЕАЛЬНОГО АРТА */
-        .art-card {
-            background: var(--panel-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-neon);
-            border-radius: 24px;
-            padding: 25px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(157, 78, 221, 0.1);
-            max-width: 550px;
-            width: 90%;
-            text-align: center;
-            animation: card-entry 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            transition: transform 0.3s, border-color 0.3s;
-        }
-
-        .art-card:hover {
-            border-color: var(--accent-bright);
-            transform: translateY(-5px);
-        }
-
-        @keyframes card-entry {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .art-title {
-            font-size: 24px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, #e0aaff, #b5179e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(181, 23, 158, 0.4);
-        }
-
-        .image-wrapper {
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: #06040a;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(123, 44, 191, 0.2);
-            position: relative;
-        }
-
-        /* Вшиваем твой идеальный получившийся арт напрямую в сайт */
-        .main-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: drop-shadow(0 0 15px rgba(157, 78, 221, 0.3));
-        }
-
-        /* КНОПКА СКАЧИВАНИЯ ОРИГИНАЛА */
-        .action-btn {
-            display: inline-block;
-            width: 100%;
-            background: linear-gradient(135deg, var(--accent-purple), #5a189a);
-            color: #fff;
-            border: 1px solid rgba(224, 170, 255, 0.3);
-            padding: 16px;
-            font-size: 15px;
-            font-weight: 800;
-            border-radius: 12px;
-            cursor: pointer;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 25px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3);
-        }
-
-        .action-btn:hover {
-            background: linear-gradient(135deg, var(--accent-bright), var(--accent-purple));
-            box-shadow: 0 6px 25px rgba(181, 23, 158, 0.6);
-            transform: translateY(-1px);
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-color); color: #f3f0fc; font-family: sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .cosmic-bg { position: fixed; inset: 0; z-index: -3; background: linear-gradient(180deg, #090514 0%, #040209 100%); }
+        
+        /* Живые неоновые вспышки грозы */
+        .lightning-storm { position: fixed; inset: 0; z-index: -2; pointer-events: none; animation: flash 5s infinite ease-in-out; }
+        @keyframes flash { 0%, 90%, 94%, 96%, 100% { background: rgba(0,0,0,0); } 92% { background: rgba(157, 78, 221, 0.15); filter: blur(4px); } 95% { background: rgba(181, 23, 158, 0.08); } }
+        .fog-bottom { position: fixed; bottom: 0; left: 0; width: 100%; height: 30vh; z-index: -1; background: linear-gradient(to top, rgba(123, 44, 191, 0.15), transparent); filter: blur(15px); pointer-events: none; }
+        
+        /* Рамка под арт */
+        .art-card { background: var(--panel-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-neon); border-radius: 24px; padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); max-width: 500px; width: 92%; text-align: center; }
+        .art-title { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; background: linear-gradient(45deg, #e0aaff, #b5179e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .image-wrapper { width: 100%; aspect-ratio: 1/1; background: #06040a; border-radius: 16px; overflow: hidden; box-shadow: 0 0 30px rgba(123, 44, 191, 0.2); }
+        .main-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Кнопка */
+        .action-btn { display: inline-block; width: 100%; background: linear-gradient(135deg, #7b2cbf, #5a189a); color: #fff; border: 1px solid rgba(224, 170, 255, 0.3); padding: 16px; font-size: 14px; font-weight: 800; border-radius: 12px; cursor: pointer; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; margin-top: 25px; transition: all 0.3s; }
+        .action-btn:hover { background: linear-gradient(135deg, var(--accent-bright), #7b2cbf); box-shadow: 0 6px 25px rgba(181, 23, 158, 0.6); }
     </style>
 </head>
 <body>
-
     <div class="cosmic-bg"></div>
     <div class="lightning-storm"></div>
     <div class="fog-bottom"></div>
@@ -167,11 +39,10 @@
     <div class="art-card">
         <div class="art-title">PulseGenerate</div>
         <div class="image-wrapper">
-            <!-- Ссылка на твое новое идеальное изображение -->
-            <img class="main-img" src="https://postimg.cc" alt="Rick Sanchez Masterwork">
+            <!-- Твой личный шедевр -->
+            <img class="main-img" src="СЮДА_ВСТАВЬТЕ_ВАШУ_ССЫЛКУ_ИЗ_POSTIMAGES" alt="Rick Sanchez Art">
         </div>
-        <a class="action-btn" href="https://postimg.cc" target="_blank" download="rick-pulse-neon.png">Скачать шедевр в 4K</a>
+        <a class="action-btn" href="СЮДА_ВСТАВЬТЕ_ВАШУ_ССЫЛКУ_ИЗ_POSTIMAGES" target="_blank" download="rick-art.png">Скачать в Full HD</a>
     </div>
-
 </body>
 </html>
