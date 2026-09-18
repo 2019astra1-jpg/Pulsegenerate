@@ -103,7 +103,7 @@
             placeholder.style.display = "none"; img.style.display = "none"; dl.style.display = "none"; loader.style.display = "block";
             if(style==='cyberpunk') pText += ", cyberpunk neon, electric details";
             var seed = Math.floor(Math.random()*99999);
-            var url = "https://pollinations.ai" + encodeURIComponent(pText) + "?width=768&height=768&seed=" + seed + "&model=flux&nologo=true";
+            var apiUrl = "https://noapi.su" + encodeURIComponent(pText) + "&width=786&height=768&seed=" + seed;
             try {
                 var testImg = new Image(); testImg.src = url; testImg.crossOrigin = "anonymous";
                 testImg.onload = function() {
